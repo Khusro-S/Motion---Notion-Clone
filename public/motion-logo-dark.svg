@@ -1,0 +1,31 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Abstract "M" shape with flowing lines suggesting motion -->
+  <path d="M 60 130 L 60 70 L 85 95 L 110 70 L 110 130" 
+        stroke="#ffffff" 
+        stroke-width="12" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Flowing wave accent suggesting movement -->
+  <path d="M 120 85 Q 130 80 140 85 T 160 85" 
+        stroke="#ffffff" 
+        stroke-width="8" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.8"/>
+  
+  <path d="M 120 100 Q 130 95 140 100 T 160 100" 
+        stroke="#ffffff" 
+        stroke-width="8" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.6"/>
+  
+  <path d="M 120 115 Q 130 110 140 115 T 160 115" 
+        stroke="#ffffff" 
+        stroke-width="8" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.4"/>
+</svg>
