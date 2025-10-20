@@ -2,11 +2,20 @@
 
 import useScrollTop from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
-import Logo from "./Logo";
 import { ModeToggle } from "@/components/mode-toggle";
+
+import { useConvexAuth } from "convex/react";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Spinner } from "@/components/Spinner";
+import { Button } from "@/components/ui/button";
+
+import Logo from "./Logo";
+import Link from "next/link";
 
 export default function Navbar() {
   const scrolled = useScrollTop();
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
   return (
     <div
       className={cn(
@@ -16,6 +25,28 @@ export default function Navbar() {
     >
       <Logo />
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
+        {isLoading && <Spinner size="lg" />}
+        {!isAuthenticated && !isLoading && (
+          <>
+            <SignInButton mode="modal" fallbackRedirectUrl="/documents">
+              <Button variant="ghost" size="sm">
+                Log in
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal" fallbackRedirectUrl="/documents">
+              <Button size="sm">Get Motion Free</Button>
+            </SignUpButton>
+          </>
+        )}
+
+        {isAuthenticated && !isLoading && (
+          <>
+            {/* <Button asChild size="sm" variant="ghost">
+              <Link href="/documents">Enter Motion</Link>
+            </Button> */}
+            <UserButton afterSwitchSessionUrl="/" />
+          </>
+        )}
         <ModeToggle />
       </div>
     </div>
