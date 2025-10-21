@@ -1,15 +1,31 @@
 "use client";
 
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  PlusCircle,
+  Search,
+  Settings,
+} from "lucide-react";
 import { ComponentRef, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
+import UserItem from "./UserItem";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Item from "./Item";
+import { toast } from "sonner";
+import DocumentsList from "./DocumentsList";
 
 export default function Navigation() {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // const documents = useQuery(api.documents.getUserDocuments);
+
+  const create = useMutation(api.documents.create);
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ComponentRef<"aside">>(null);
@@ -92,6 +108,17 @@ export default function Navigation() {
       setTimeout(() => setIsResetting(false), 300);
     }
   };
+
+  const handleCreate = () => {
+    const promise = create({ title: "Untitled Note" });
+
+    toast.promise(promise, {
+      loading: "Creating your new note...",
+      success: "New note created!",
+      error: "Failed to create your new note.",
+    });
+  };
+
   return (
     <>
       <aside
@@ -99,8 +126,8 @@ export default function Navigation() {
         className={cn(
           "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
           isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "w-0",
-          isCollapsed && "w-16"
+          isMobile && "w-0"
+          // isCollapsed && "w-16"
         )}
       >
         <div
@@ -114,9 +141,15 @@ export default function Navigation() {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <p>Action Items</p>
+          <UserItem />
+          <Item label="Search" icon={Search} isSearch onClick={() => {}} />
+          <Item label="Setting" icon={Settings} onClick={() => {}} />
+          <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
           <div className="mt-4">
-            <p>Documents</p>
+            {/* {documents?.map((document) => (
+              <p key={document._id}>{document.title} </p>
+            ))} */}
+            <DocumentsList />
           </div>
           {/* appears when hovering over sidebar edge */}
           <div
