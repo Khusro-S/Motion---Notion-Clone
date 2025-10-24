@@ -45,7 +45,8 @@ export default function DocumentsList({
         <Item.Skeleton level={level} />
         {level === 0 && (
           <>
-            Item.Skeleton({level}); Item.Skeleton({level});
+            <Item.Skeleton level={level} />
+            <Item.Skeleton level={level} />
           </>
         )}
       </>
@@ -53,6 +54,18 @@ export default function DocumentsList({
   }
   return (
     <>
+      {/* {documents.length === 0 && (
+        <p
+          style={{ paddingLeft: level ? `${level * 12 + 25}px` : "12px" }}
+          className={cn(
+            "text-sm text-muted-foreground/80",
+            level === 0 ? "font-normal py-2" : "font-medium hidden last:block"
+          )}
+        >
+          {level === 0 ? "No notes yet" : "No pages inside"}
+        </p>
+      )} */}
+
       <p
         style={{ paddingLeft: level ? `${level * 12 + 25}px` : undefined }}
         className={cn(

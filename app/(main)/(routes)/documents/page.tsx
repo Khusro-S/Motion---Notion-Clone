@@ -14,6 +14,7 @@ export default function DocumentsPage() {
 
   const create = useMutation(api.documents.create);
 
+
   const onCreate = () => {
     const promise = create({ title: "Untitled Note" });
 
@@ -45,7 +46,7 @@ export default function DocumentsPage() {
       </h2>
       <Button onClick={onCreate}>
         <PlusCircle className="h-4 w-4 mr-0" />
-        Create your first Note!
+        Create a Note
       </Button>
     </div>
   );
