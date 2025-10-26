@@ -6,6 +6,7 @@ import { useCoverImage } from "@/hooks/use-cover-image";
 import { useParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
 import { useFileRemove } from "@/hooks/use-file-remove";
+import { Skeleton } from "./ui/skeleton";
 
 interface CoverProps {
   url?: string;
@@ -58,3 +59,7 @@ export default function Cover({ url, preview }: CoverProps) {
     </div>
   );
 }
+
+Cover.Skeleton = function CoverSkeleton() {
+  return <Skeleton className="w-full md:h-[35vh] h-[25vh]" />;
+};
