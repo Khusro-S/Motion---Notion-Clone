@@ -9,20 +9,51 @@ import {
 
 import { useCoverImage } from "@/hooks/use-cover-image";
 import { SingleImageDropzone } from "@/components/upload/single-image";
-import {
-  UploaderProvider,
-  type UploadFn,
-} from "@/components/upload/uploader-provider";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { UploaderProvider } from "@/components/upload/uploader-provider";
 import { useParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
 import { useFileUpload } from "@/hooks/use-file-upload";
+import { useEffect, useState } from "react";
 
 export default function CoverImageModal() {
   const coverImage = useCoverImage();
 
   const params = useParams();
+
+  const [dropzoneWidth, setDropzoneWidth] = useState(450);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    const updateWidth = () => {
+      if (typeof window === "undefined") return;
+
+      if (window.innerWidth < 640) {
+        setDropzoneWidth(Math.min(window.innerWidth * 0.8, 450));
+      } else {
+        // Desktop: fixed 450px
+        setDropzoneWidth(450);
+      }
+    };
+
+    // Set initial width
+    updateWidth();
+
+    let timeoutId: NodeJS.Timeout;
+    const debouncedUpdate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        updateWidth();
+      }, 100);
+    };
+    // Update on resize
+    window.addEventListener("resize", debouncedUpdate);
+    return () => {
+      window.removeEventListener("resize", debouncedUpdate);
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   const onClose = () => {
     coverImage.onClose();
@@ -47,7 +78,7 @@ export default function CoverImageModal() {
         <UploaderProvider uploadFn={uploadFn} autoUpload>
           <SingleImageDropzone
             height={200}
-            width={450}
+            width={dropzoneWidth}
             dropzoneOptions={{
               maxSize: 1024 * 1024 * 4, // 4 MB
             }}
