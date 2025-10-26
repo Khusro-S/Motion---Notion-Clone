@@ -25,6 +25,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useUser } from "@clerk/nextjs";
+import { useTitle } from "@/hooks/use-title";
 
 interface ItemProps {
   id?: Id<"documents">;
@@ -55,6 +56,11 @@ export default function Item({
   const router = useRouter();
   const create = useMutation(api.documents.create);
   const archive = useMutation(api.documents.archive);
+
+  const { editingTitleId, editingTitleValue } = useTitle();
+
+  // Use editing value if this item is being edited, otherwise use the label prop
+  const displayLabel = editingTitleId === id ? editingTitleValue : label;
 
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
@@ -124,7 +130,7 @@ export default function Item({
         <Icon className="shrink-0 h-[18px] mr-2 text-muted-foreground" />
       )}
 
-      <span className="truncate">{label}</span>
+      <span className="truncate">{displayLabel}</span>
 
       {isSearch && (
         <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">

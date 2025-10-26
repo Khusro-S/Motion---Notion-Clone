@@ -1,17 +1,17 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Spinner } from "@/components/Spinner";
+import { useParams } from "next/navigation";
+import Toolbar from "@/app/(main)/_components/Toolbar";
 
 export default function DocumentIdPage() {
   const params = useParams();
   const documentId = params.documentId as Id<"documents">;
-
   const document = useQuery(api.documents.getDocumentById, {
-    documentId: documentId,
+    documentId,
   });
 
   if (document === undefined) {
@@ -24,17 +24,16 @@ export default function DocumentIdPage() {
 
   if (document === null) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <p className="text-muted-foreground">Document not found</p>
-      </div>
+      <div className="h-full flex items-center justify-center">Not found</div>
     );
   }
 
   return (
-    <div className="h-full">
-      <div className="p-8">
-        {/* <h1 className="text-4xl font-bold">{document.title}</h1> */}
-        {/* {document.content && <div className="mt-4">{document.content}</div>} */}
+    <div className="pb-40 pt-12">
+      <div className="h-[35vh]">
+        <div className="md:max-w-3xl lg:max-w-4xl flex justify-center items-center">
+          <Toolbar initialData={document} />
+        </div>
       </div>
     </div>
   );
