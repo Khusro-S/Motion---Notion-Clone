@@ -99,7 +99,7 @@ export default function Title({ initialData }: TitleProps) {
         />
       ) : (
         <Button
-          onClick={enableInput}
+          onClick={!initialData.isArchived ? enableInput : undefined}
           variant="ghost"
           size="sm"
           className="font-normal h-auto p-1"

@@ -6,6 +6,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { Spinner } from "@/components/Spinner";
 import { useParams } from "next/navigation";
 import Toolbar from "@/app/(main)/_components/Toolbar";
+import Cover from "@/components/Cover";
 
 export default function DocumentIdPage() {
   const params = useParams();
@@ -29,11 +30,10 @@ export default function DocumentIdPage() {
   }
 
   return (
-    <div className="pb-40 pt-12">
-      <div className="h-[35vh]">
-        <div className="md:max-w-3xl lg:max-w-4xl flex justify-center items-center">
-          <Toolbar initialData={document} />
-        </div>
+    <div className="pb-40">
+      <Cover url={document.coverImage} />
+      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
+        <Toolbar initialData={document} />
       </div>
     </div>
   );

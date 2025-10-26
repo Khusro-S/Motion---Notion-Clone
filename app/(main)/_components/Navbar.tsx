@@ -47,7 +47,11 @@ export default function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
         <div className="flex items-center justify-between w-full">
           <Title initialData={document} />
           <div className="flex items-center gap-x-2">
-            <Menu documentId={document._id} />
+            <Menu
+              documentId={document._id}
+              cover={!!document.coverImage}
+              icon={!!document.icon}
+            />
           </div>
         </div>
       </nav>

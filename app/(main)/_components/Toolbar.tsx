@@ -15,6 +15,7 @@ import { useTitle } from "@/hooks/use-title";
 import { removeIcon } from "@/convex/documents";
 import { on } from "events";
 import { cn } from "@/lib/utils";
+import { useCoverImage } from "@/hooks/use-cover-image";
 
 interface ToolbarProps {
   initialData: Doc<"documents">;
@@ -32,6 +33,8 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
     updateValue,
     clearEditing,
   } = useTitle();
+
+  const coverImage = useCoverImage();
 
   const update = useMutation(api.documents.updateDocumentTitle);
   const remove = useMutation(api.documents.removeIcon);
@@ -79,6 +82,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
   const disableInput = () => {
     setIsEditing(false);
     clearEditing();
+    inputRef.current?.blur();
   };
 
   const onInput = (value: string) => {
@@ -111,7 +115,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
       {!!initialData.icon && !preview && !initialData.isArchived && (
         <div className="flex items-center gap-x-2 group/icon pt-4">
           <IconPicker onChange={onIconSelect}>
-            <p className="text-6xl hover:opacity-75 transition cursor-pointer">
+            <p className="text-6xl hover:opacity-75 transition cursor-pointer pt-14">
               {initialData.icon}
             </p>
           </IconPicker>
@@ -127,18 +131,23 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
         </div>
       )}
 
-      {!!initialData.icon && preview && !initialData.isArchived && (
+      {!!initialData.icon && preview && (
         <p className="text-6xl pt-6">{initialData.icon}</p>
       )}
 
-      {!preview && (
+      {!preview && !initialData.isArchived && (
         <div
           className={cn(
-            "absolute left-[54px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-x-2 z-1000",
+            "left-[54px] opacity-0 transition-opacity flex items-center gap-x-2 z-1000 pt-4",
+            // Mobile: always visible
+            // "opacity-100 pb-4",
+
+            // Desktop: only visible on hover
+            "md:opacity-0 md:group-hover:opacity-100",
             !initialData.icon ? "top-15" : "top-35"
           )}
         >
-          {!initialData.icon && !initialData.isArchived && (
+          {!initialData.icon && (
             <IconPicker onChange={onIconSelect} asChild>
               <Button
                 className="text-muted-foreground text-xs"
@@ -149,12 +158,23 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
               </Button>
             </IconPicker>
           )}
-          {!initialData.coverImage && !initialData.isArchived && !preview && (
+          {initialData.icon && (
             <Button
               className="text-muted-foreground text-sm"
               variant="outline"
               size="sm"
-              onClick={() => {}}
+              onClick={onRemoveIcon}
+            >
+              <X className="h-4 w-4" />
+              Remove icon
+            </Button>
+          )}
+          {!initialData.coverImage && (
+            <Button
+              className="text-muted-foreground text-sm"
+              variant="outline"
+              size="sm"
+              onClick={coverImage.onOpen}
             >
               <ImageIcon className="h-4 w-4" />
               Add cover
@@ -170,7 +190,10 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
           onKeyDown={onKeyDown}
           value={displayTitle}
           onChange={(e) => onInput(e.target.value)}
-          className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none w-full "
+          className={cn(
+            "text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none w-full ",
+            initialData.icon ? "mt-3" : ""
+          )}
         />
       )}
       {preview && !isEditing && (
@@ -184,8 +207,9 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
       {initialData.isArchived && (
         <div
           //   onClick={enableInput}
-          className="pb-[11.5px] pt-20 text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF]"
+          className="pb-[11.5px] pt-0 text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF]"
         >
+          <p className="text-6xl pt-6">{initialData.icon}</p>
           {displayTitle}
         </div>
       )}

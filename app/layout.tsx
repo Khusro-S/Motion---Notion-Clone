@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import ConvexClientProvider from "@/components/providers/convex-provider";
 import ModalProvider from "@/components/providers/modal-provider";
 
+import { EdgeStoreProvider } from "@/lib/edgestore";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -60,23 +62,25 @@ export default function RootLayout({
           }}
         >
           <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-              storageKey="motion-theme"
-            >
-              <Toaster
-                position="top-right"
-                closeButton
-                // richColors
-                visibleToasts={5}
-                theme="dark"
-              />
-              <ModalProvider />
-              {children}
-            </ThemeProvider>
+            <EdgeStoreProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="motion-theme"
+              >
+                <Toaster
+                  position="top-right"
+                  closeButton
+                  // richColors
+                  visibleToasts={5}
+                  theme="dark"
+                />
+                <ModalProvider />
+                {children}
+              </ThemeProvider>
+            </EdgeStoreProvider>
           </ConvexClientProvider>
         </ClerkProvider>
       </body>
