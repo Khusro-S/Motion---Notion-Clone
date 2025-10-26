@@ -49,7 +49,7 @@ export default function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
           <div className="flex items-center gap-x-2">
             <Menu
               documentId={document._id}
-              cover={!!document.coverImage}
+              coverUrl={document.coverImage}
               icon={!!document.icon}
             />
           </div>

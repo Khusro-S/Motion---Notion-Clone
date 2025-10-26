@@ -13,44 +13,31 @@ import {
   UploaderProvider,
   type UploadFn,
 } from "@/components/upload/uploader-provider";
-import { useState, useCallback } from "react";
-import { useEdgeStore } from "@/lib/edgestore";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
+import { useFileUpload } from "@/hooks/use-file-upload";
 
 export default function CoverImageModal() {
   const coverImage = useCoverImage();
-  const { edgestore } = useEdgeStore();
 
-  const update = useMutation(api.documents.updateDocumentTitle);
   const params = useParams();
 
   const onClose = () => {
     coverImage.onClose();
   };
 
-  const uploadFn: UploadFn = useCallback(
-    async ({ file, onProgressChange, signal }) => {
-      const res = await edgestore.publicImages.upload({
-        file,
-        signal,
-        onProgressChange,
-      });
-
-      await update({
-        id: params.documentId as Id<"documents">,
-        coverImage: res.url,
-      });
-
-      return res;
+  const { uploadFn } = useFileUpload({
+    documentId: params.documentId as Id<"documents">,
+    existingUrl: coverImage.url,
+    onSuccess: () => {
+      coverImage.onClose();
     },
-    [edgestore, update, params.documentId]
-  );
+  });
 
   return (
-    <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
+    <Dialog open={coverImage.isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center text-lg font-semibold">

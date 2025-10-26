@@ -158,7 +158,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
               </Button>
             </IconPicker>
           )}
-          {initialData.icon && (
+          {/* {initialData.icon && (
             <Button
               className="text-muted-foreground text-sm"
               variant="outline"
@@ -168,7 +168,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
               <X className="h-4 w-4" />
               Remove icon
             </Button>
-          )}
+          )} */}
           {!initialData.coverImage && (
             <Button
               className="text-muted-foreground text-sm"

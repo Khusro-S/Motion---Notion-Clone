@@ -19,21 +19,26 @@ import { ImageIcon, MoreHorizontal, Smile, Trash, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCoverImage } from "@/hooks/use-cover-image";
 import IconPicker from "./IconPicker";
+import { useFileRemove } from "@/hooks/use-file-remove";
 
 interface MenuProps {
   documentId: Id<"documents">;
-  cover?: boolean;
+  coverUrl?: string;
   icon?: boolean;
 }
-export default function Menu({ documentId, cover, icon }: MenuProps) {
+export default function Menu({ documentId, coverUrl, icon }: MenuProps) {
   const router = useRouter();
   const { user } = useUser();
 
   const archive = useMutation(api.documents.archive);
-  const remove = useMutation(api.documents.removeIcon);
+  const removeIcon = useMutation(api.documents.removeIcon);
   const update = useMutation(api.documents.updateDocumentTitle);
-  // const removeCover = useMutation(api.documents.removeCover);
   const coverImage = useCoverImage();
+
+  const { onRemove: onRemoveCover } = useFileRemove({
+    documentId,
+    fileUrl: coverUrl,
+  });
 
   const onArchive = () => {
     const promise = archive({
@@ -49,14 +54,24 @@ export default function Menu({ documentId, cover, icon }: MenuProps) {
     router.push("/documents");
   };
   const onIconSelect = (icon: string) => {
-    update({
+    const promise = update({
       id: documentId,
       icon,
     });
+    toast.promise(promise, {
+      loading: "Adding icon...",
+      success: "Icon added!",
+      error: "Failed to add icon.",
+    });
   };
   const onRemoveIcon = () => {
-    remove({
+    const promise = removeIcon({
       id: documentId,
+    });
+    toast.promise(promise, {
+      loading: "Removing icon...",
+      success: "Icon removed!",
+      error: "Failed to remove icon.",
     });
   };
 
@@ -64,15 +79,17 @@ export default function Menu({ documentId, cover, icon }: MenuProps) {
     coverImage.onOpen();
   };
 
-  const onRemoveCover = () => {
-    //   const promise = removeCover({ id: documentId });
-    coverImage.onClose;
-    //   toast.promise(promise, {
-    //     loading: "Removing cover...",
-    //     success: "Cover removed!",
-    //     error: "Failed to remove cover.",
-    //   });
-  };
+  //   const onReplaceCover = () => {
+  //  if (coverImage.url) {
+  //    coverImage.onReplace(coverImage.url, documentId);
+  //  } else {
+  //    coverImage.onOpen();
+  //  }
+  //     removeCoverImage({
+  //       id: params.documentId as Id<"documents">,
+  //     });
+  //   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -114,9 +131,9 @@ export default function Menu({ documentId, cover, icon }: MenuProps) {
           </>
         )}
         {/* Cover Image Actions */}
-        {cover ? (
+        {coverUrl ? (
           <>
-            <DropdownMenuItem onClick={onAddCover}>
+            <DropdownMenuItem onClick={() => coverImage.onReplace(coverUrl)}>
               <ImageIcon className="h-4 w-4 mr-2" />
               Change cover
             </DropdownMenuItem>
