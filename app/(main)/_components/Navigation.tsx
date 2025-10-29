@@ -17,7 +17,7 @@ import { useSettings } from "@/hooks/use-settings";
 
 import { cn } from "@/lib/utils";
 import UserItem from "./UserItem";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 import {
@@ -40,9 +40,11 @@ export default function Navigation() {
 
   const router = useRouter();
 
-  // const documents = useQuery(api.documents.getUserDocuments);
-
   const create = useMutation(api.documents.create);
+
+  // Query limits for display
+  const documentCountData = useQuery(api.documents.getUserDocumentCount);
+  const fileCountData = useQuery(api.documents.getUserFileCount);
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ComponentRef<"aside">>(null);
@@ -136,7 +138,13 @@ export default function Navigation() {
     toast.promise(promise, {
       loading: "Creating your new note...",
       success: "New note created!",
-      error: "Failed to create your new note.",
+      error: (err) => {
+        // Check if it's a limit error
+        if (err?.message?.includes("limit reached")) {
+          return err.message;
+        }
+        return "Failed to create your new note.";
+      },
     });
   };
 
@@ -145,7 +153,7 @@ export default function Navigation() {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
+          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[100]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0"
           // isCollapsed && "w-16"
@@ -187,6 +195,40 @@ export default function Navigation() {
               </PopoverContent>
             </Popover>
           </div>
+
+          {/* Demo Limits Indicator */}
+          <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-border bg-secondary/50">
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p className="font-semibold mb-2">Demo Limits</p>
+              <div className="flex justify-between">
+                <span>Notes:</span>
+                <span
+                  className={cn(
+                    documentCountData &&
+                      documentCountData.count >= documentCountData.limit
+                      ? "text-red-500 font-semibold"
+                      : "text-foreground"
+                  )}
+                >
+                  {documentCountData?.count ?? 0}/
+                  {documentCountData?.limit ?? 10}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Files:</span>
+                <span
+                  className={cn(
+                    fileCountData && fileCountData.count >= fileCountData.limit
+                      ? "text-red-500 font-semibold"
+                      : "text-foreground"
+                  )}
+                >
+                  {fileCountData?.count ?? 0}/{fileCountData?.limit ?? 5}
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* appears when hovering over sidebar edge */}
           <div
             onMouseDown={handleMouseDown}

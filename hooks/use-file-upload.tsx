@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
@@ -21,9 +21,20 @@ export function useFileUpload({
 }: UseFileUploadProps) {
   const { edgestore } = useEdgeStore();
   const update = useMutation(api.documents.updateDocumentTitle);
+  const fileCountData = useQuery(api.documents.getUserFileCount);
 
   const uploadFn: UploadFn = useCallback(
     async ({ file, onProgressChange, signal }) => {
+      // Check file limit BEFORE upload (unless replacing existing)
+      if (!existingUrl && fileCountData) {
+        if (fileCountData.count >= fileCountData.limit) {
+          toast.error(
+            `File limit reached. Maximum ${fileCountData.limit} files allowed for demo accounts.`
+          );
+          throw new Error("File limit reached");
+        }
+      }
+
       const uploadPromise = async () => {
         // Upload to EdgeStore
         const res = await edgestore.publicImages.upload({
@@ -52,7 +63,7 @@ export function useFileUpload({
 
       return result;
     },
-    [edgestore, update, documentId, existingUrl, onSuccess]
+    [edgestore, update, documentId, existingUrl, onSuccess, fileCountData]
   );
 
   return { uploadFn };

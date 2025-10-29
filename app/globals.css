@@ -18,14 +18,9 @@ body,
 
 /* Editor content area */
 .bn-editor {
-  background-color: transparent !important;
+  background-color: transparent !important; 
+
 }
-
-/* .bn-container .bn-editor {
-  padding-left: 0;
-  padding-right: 0;
-} */
-
 
 @custom-variant dark (&:is(.dark *));
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useDeleteFiles } from "@/hooks/use-delete-files";
 
@@ -15,6 +15,7 @@ interface BannerProps {
 
 export default function Banner({ documentId }: BannerProps) {
   const router = useRouter();
+  const params = useParams();
   const { deleteDocumentWithFiles } = useDeleteFiles();
 
   const remove = useMutation(api.documents.remove);
@@ -24,21 +25,30 @@ export default function Banner({ documentId }: BannerProps) {
   const allDocuments = useQuery(api.documents.getTrash);
 
   const onRemove = async () => {
-    const promise = (async () => {
+    let loadingToast: string | number | undefined;
+
+    try {
+      loadingToast = toast.loading("Deleting your note...");
+
       await deleteDocumentWithFiles(
         document || { _id: documentId },
         allDocuments || []
       );
+      if (params.documentId === documentId) {
+        router.push("/documents");
+      }
       await remove({ id: documentId });
-    })();
 
-    toast.promise(promise, {
-      loading: "Deleting your note...",
-      success: "Note deleted",
-      error: "Failed to delete your note.",
-    });
+      toast.dismiss(loadingToast);
+      toast.success("Your note is deleted permanently!");
+    } catch (error) {
+      console.error("Failed to delete document:", error);
 
-    router.push("/documents");
+      if (loadingToast) {
+        toast.dismiss(loadingToast);
+      }
+      toast.error("Failed to delete your note.");
+    }
   };
   const onRestore = () => {
     const promise = restore({

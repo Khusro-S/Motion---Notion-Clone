@@ -12,6 +12,8 @@ import { useEdgeStore } from "@/lib/edgestore";
 import { Id } from "@/convex/_generated/dataModel";
 import { useDeleteFiles } from "@/hooks/use-delete-files";
 import { toast } from "sonner";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface EditorProps {
   onChange?: (value: string) => void;
@@ -31,7 +33,13 @@ export default function Editor({
   const { edgestore } = useEdgeStore();
   const { deleteFile, extractFileUrls, replaceFile } = useDeleteFiles();
 
+  // Query file count
+  const fileCountData = useQuery(api.documents.getUserFileCount);
+
   const previousFilesRef = useRef<Set<string>>(new Set());
+
+  // Track uploads in current session to prevent exceeding limit
+  const sessionUploadCountRef = useRef(0);
 
   const currentDocumentIdRef = useRef<Id<"documents">>(documentId);
 
@@ -50,6 +58,26 @@ export default function Editor({
     // Define file size limits (in bytes)
     const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+    // Check file limit BEFORE upload (unless replacing)
+    if (!replacementContextRef.current.oldUrl) {
+      // Wait for file count data if not yet loaded
+      if (!fileCountData) {
+        toast.error("Loading file count, please try again in a moment.");
+        return "";
+      }
+
+      // Calculate current file count including session uploads
+      const currentFileCount =
+        fileCountData.count + sessionUploadCountRef.current;
+
+      if (currentFileCount >= fileCountData.limit) {
+        toast.error(
+          `File limit reached. Maximum ${fileCountData.limit} files allowed for demo accounts.`
+        );
+        return "";
+      }
+    }
 
     // Check file size
     const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
@@ -76,14 +104,27 @@ export default function Editor({
       replacementContextRef.current = {}; // Reset
     }
 
-    const response = isImage
-      ? await edgestore.publicImages.upload({ file })
-      : await edgestore.publicFiles.upload({ file });
+    try {
+      const response = isImage
+        ? await edgestore.publicImages.upload({ file })
+        : await edgestore.publicFiles.upload({ file });
 
-    previousFilesRef.current.add(response.url);
-    console.log("✅ File uploaded:", response.url);
+      previousFilesRef.current.add(response.url);
 
-    return response.url;
+      // Increment session upload count only for new uploads (not replacements)
+      if (!replacementContextRef.current.oldUrl) {
+        sessionUploadCountRef.current += 1;
+      }
+
+      console.log("✅ File uploaded:", response.url);
+      console.log("Session upload count:", sessionUploadCountRef.current);
+
+      return response.url;
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast.error("Failed to upload file. Please try again.");
+      return "";
+    }
   };
 
   const editor: BlockNoteEditor = useCreateBlockNote({
@@ -176,6 +217,10 @@ export default function Editor({
         for (const url of removedFiles) {
           await deleteFile(url);
           previousFilesRef.current.delete(url);
+          // Decrement session upload count when files are deleted
+          if (sessionUploadCountRef.current > 0) {
+            sessionUploadCountRef.current -= 1;
+          }
         }
       }
 
@@ -192,6 +237,9 @@ export default function Editor({
     // Reset state ONLY when switching to a different document
     currentDocumentIdRef.current = documentId;
     isFirstChangeRef.current = true;
+
+    // Reset session upload count when switching documents
+    sessionUploadCountRef.current = 0;
 
     if (initialContent) {
       try {

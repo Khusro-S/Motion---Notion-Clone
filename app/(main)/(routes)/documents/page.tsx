@@ -17,6 +17,7 @@ export default function DocumentsPage() {
   const { user } = useUser();
 
   const create = useMutation(api.documents.create);
+  const documentCountData = useQuery(api.documents.getUserDocumentCount);
 
   const router = useRouter();
 
@@ -30,7 +31,13 @@ export default function DocumentsPage() {
     toast.promise(promise, {
       loading: "Creating your new note...",
       success: "New note created!",
-      error: "Failed to create your new note.",
+      error: (err) => {
+        // Check if it's a limit error
+        if (err?.message?.includes("limit reached")) {
+          return "File limit reached";
+        }
+        return "Failed to create your new note.";
+      },
     });
   };
 
@@ -54,6 +61,15 @@ export default function DocumentsPage() {
         Welcome to <span className="font-bold">{user?.firstName}</span>&apos;s
         Motion
       </h2>
+
+      {/* Demo limits info */}
+      <div className="text-sm text-muted-foreground bg-secondary/50 px-4 py-2 rounded-lg border border-border">
+        <p className="font-semibold mb-1">Portfolio Demo App</p>
+        <p className="text-xs">
+          Max {documentCountData?.limit ?? 10} Notes • Max 5 files
+        </p>
+      </div>
+
       <Button onClick={onCreate}>
         <PlusCircle className="h-4 w-4 mr-0" />
         Create a Note

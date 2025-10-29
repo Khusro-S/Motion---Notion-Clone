@@ -97,7 +97,13 @@ export default function Item({
     toast.promise(promise, {
       loading: "Creating your new Note...",
       success: "New Note created!",
-      error: "Failed to create your new Note.",
+      error: (err) => {
+        // Check if it's a limit error
+        if (err?.message?.includes("limit reached")) {
+          return err.message;
+        }
+        return "Failed to create your new Note.";
+      },
     });
   };
 
