@@ -9,7 +9,7 @@ const es = initEdgeStore.create();
 const edgeStoreRouter = es.router({
   publicImages: es
     .imageBucket({
-      maxSize: 1024 * 1024 * 5, // 2MB
+      maxSize: 1024 * 1024 * 5, // 5MB
     })
     .beforeDelete(({ ctx, fileInfo }) => {
       console.log("beforeDelete", ctx, fileInfo);

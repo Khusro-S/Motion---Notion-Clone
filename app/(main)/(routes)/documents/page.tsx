@@ -6,9 +6,12 @@ import { PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { Id } from "@/convex/_generated/dataModel";
+import { useEffect } from "react";
+import { Spinner } from "@/components/Spinner";
 
 export default function DocumentsPage() {
   const { user } = useUser();
@@ -16,7 +19,6 @@ export default function DocumentsPage() {
   const create = useMutation(api.documents.create);
 
   const router = useRouter();
-
 
   const onCreate = () => {
     const promise = create({ title: "Untitled Note" }).then((documentId) => {
@@ -31,6 +33,7 @@ export default function DocumentsPage() {
       error: "Failed to create your new note.",
     });
   };
+
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
       <Image

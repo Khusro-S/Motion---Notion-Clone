@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
 import { Id } from "@/convex/_generated/dataModel";
 import { useDeleteFiles } from "@/hooks/use-delete-files";
+import { toast } from "sonner";
 
 interface EditorProps {
   onChange?: (value: string) => void;
@@ -45,6 +46,27 @@ export default function Editor({
 
   const handleUpload = async (file: File) => {
     const isImage = file.type.startsWith("image/");
+
+    // Define file size limits (in bytes)
+    const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+    // Check file size
+    const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_FILE_SIZE;
+    if (file.size > maxSize) {
+      const maxSizeMB = maxSize / (1024 * 1024);
+      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+
+      // ✅ Show toast notification
+      toast.error(
+        `File too large: ${fileSizeMB}MB (max: ${maxSizeMB}MB for ${
+          isImage ? "images" : "files"
+        })`
+      );
+
+      // throw new Error(`File size exceeds maximum allowed size`);
+      return "";
+    }
 
     // If we're replacing a file, delete the old one first
     if (replacementContextRef.current.oldUrl) {

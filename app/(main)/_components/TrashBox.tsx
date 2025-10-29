@@ -50,23 +50,24 @@ export default function TrashBox() {
 
   const onRemove = async (documentId: Id<"documents">) => {
     const document = documents?.find((doc) => doc._id === documentId);
+    let loadingToast: string | number | undefined;
 
-    const promise = (async () => {
+    try {
+      loadingToast = toast.loading("Deleting your note...");
       await deleteDocumentWithFiles(
         document || { _id: documentId },
         documents || []
       );
+      if (params.documentId === documentId) {
+        router.push("/documents");
+      }
       await remove({ id: documentId });
-    })();
-
-    toast.promise(promise, {
-      loading: "Deleting your note...",
-      success: "Your note is deleted!",
-      error: "Failed to delete your note.",
-    });
-
-    if (params.documentId === documentId) {
-      router.push("/documents");
+      toast.success("Your note is deleted permanently!");
+    } catch (error) {
+      toast.error("Failed to delete your note.");
+      router.push(`/documents/${documentId}`);
+    } finally {
+      toast.dismiss(loadingToast);
     }
   };
 
