@@ -3,17 +3,22 @@
 import ConfirmModal from "@/components/modals/Confirm-Modal";
 import { Spinner } from "@/components/Spinner";
 import { Input } from "@/components/ui/input";
+import { Search, Trash, Undo } from "lucide-react";
+import { toast } from "sonner";
+
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
-import { Search, Trash, Undo } from "lucide-react";
+
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+
+import { useDeleteFiles } from "@/hooks/use-delete-files";
 
 export default function TrashBox() {
   const router = useRouter();
   const params = useParams();
+  const { deleteDocumentWithFiles } = useDeleteFiles();
 
   const documents = useQuery(api.documents.getTrash);
   const restore = useMutation(api.documents.restore);
@@ -42,8 +47,17 @@ export default function TrashBox() {
       error: "Failed to restore your note.",
     });
   };
-  const onRemove = (documentId: Id<"documents">) => {
-    const promise = remove({ id: documentId });
+
+  const onRemove = async (documentId: Id<"documents">) => {
+    const document = documents?.find((doc) => doc._id === documentId);
+
+    const promise = (async () => {
+      await deleteDocumentWithFiles(
+        document || { _id: documentId },
+        documents || []
+      );
+      await remove({ id: documentId });
+    })();
 
     toast.promise(promise, {
       loading: "Deleting your note...",

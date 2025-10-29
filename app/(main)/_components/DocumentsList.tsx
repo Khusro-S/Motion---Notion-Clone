@@ -37,7 +37,6 @@ export default function DocumentsList({
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`);
   };
-
   // convex, this will never be undefined unless it's loading
   if (documents === undefined) {
     return (

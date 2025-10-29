@@ -10,7 +10,7 @@ import {
   Trash,
 } from "lucide-react";
 import { ComponentRef, useEffect, useRef, useState } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 import { useSearch } from "@/hooks/use-search";
 import { useSettings } from "@/hooks/use-settings";
@@ -37,6 +37,8 @@ export default function Navigation() {
   const search = useSearch();
   const settings = useSettings();
   const params = useParams();
+
+  const router = useRouter();
 
   // const documents = useQuery(api.documents.getUserDocuments);
 
@@ -125,7 +127,11 @@ export default function Navigation() {
   };
 
   const handleCreate = () => {
-    const promise = create({ title: "Untitled Note" });
+    const promise = create({ title: "Untitled Note" }).then((documentId) => {
+      if (documentId) {
+        router.push(`/documents/${documentId}`);
+      }
+    });
 
     toast.promise(promise, {
       loading: "Creating your new note...",

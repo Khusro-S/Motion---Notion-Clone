@@ -11,9 +11,10 @@ import { Skeleton } from "./ui/skeleton";
 interface CoverProps {
   url?: string;
   preview?: boolean;
+  isArchived?: boolean;
 }
 
-export default function Cover({ url, preview }: CoverProps) {
+export default function Cover({ url, preview, isArchived }: CoverProps) {
   const params = useParams();
   const coverImage = useCoverImage();
 
@@ -33,7 +34,7 @@ export default function Cover({ url, preview }: CoverProps) {
       {!!url && (
         <Image src={url} fill alt="Cover Image" className="object-cover" />
       )}
-      {url && !preview && (
+      {url && !preview && !isArchived && (
         // <>
         //   {/* Desktop: Hover buttons */}
         <div className="opacity-0 group-hover:opacity-100 absolute bottom-5 right-5 items-center gap-x-2 hidden md:flex">

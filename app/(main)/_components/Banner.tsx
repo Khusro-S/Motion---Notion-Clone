@@ -4,9 +4,10 @@ import ConfirmModal from "@/components/modals/Confirm-Modal";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useDeleteFiles } from "@/hooks/use-delete-files";
 
 interface BannerProps {
   documentId: Id<"documents">;
@@ -14,18 +15,26 @@ interface BannerProps {
 
 export default function Banner({ documentId }: BannerProps) {
   const router = useRouter();
+  const { deleteDocumentWithFiles } = useDeleteFiles();
 
   const remove = useMutation(api.documents.remove);
   const restore = useMutation(api.documents.restore);
 
-  const onRemove = () => {
-    const promise = remove({
-      id: documentId,
-    });
+  const document = useQuery(api.documents.getDocumentById, { documentId });
+  const allDocuments = useQuery(api.documents.getTrash);
+
+  const onRemove = async () => {
+    const promise = (async () => {
+      await deleteDocumentWithFiles(
+        document || { _id: documentId },
+        allDocuments || []
+      );
+      await remove({ id: documentId });
+    })();
 
     toast.promise(promise, {
       loading: "Deleting your note...",
-      success: "Note deleted ",
+      success: "Note deleted",
       error: "Failed to delete your note.",
     });
 

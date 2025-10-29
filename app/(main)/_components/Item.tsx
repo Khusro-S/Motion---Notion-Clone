@@ -72,6 +72,8 @@ export default function Item({
       success: "Note moved to trash!",
       error: "Failed to archive your note.",
     });
+
+    router.push("/documents");
   };
 
   const handleExpand = (
@@ -89,7 +91,7 @@ export default function Item({
         if (!expanded) {
           onExpand?.();
         }
-        // router.push(`/documents/${documentId}`);
+        router.push(`/documents/${documentId}`);
       }
     );
     toast.promise(promise, {

@@ -6,6 +6,26 @@ body,
 :root {
   height: 100%;
 }
+/* Light mode */
+/* .bn-container[data-color-scheme="light"] {
+  @apply bg-white;
+} */
+
+/* Dark mode */
+.bn-container[data-color-scheme="dark"] {
+  @apply bg-[#111111];
+}
+
+/* Editor content area */
+.bn-editor {
+  background-color: transparent !important;
+}
+
+/* .bn-container .bn-editor {
+  padding-left: 0;
+  padding-right: 0;
+} */
+
 
 @custom-variant dark (&:is(.dark *));
 

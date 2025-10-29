@@ -8,15 +8,22 @@ import Image from "next/image";
 
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 export default function DocumentsPage() {
   const { user } = useUser();
 
   const create = useMutation(api.documents.create);
 
+  const router = useRouter();
+
 
   const onCreate = () => {
-    const promise = create({ title: "Untitled Note" });
+    const promise = create({ title: "Untitled Note" }).then((documentId) => {
+      if (documentId) {
+        router.push(`/documents/${documentId}`);
+      }
+    });
 
     toast.promise(promise, {
       loading: "Creating your new note...",

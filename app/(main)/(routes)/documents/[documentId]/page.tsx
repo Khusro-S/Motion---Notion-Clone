@@ -1,13 +1,14 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Spinner } from "@/components/Spinner";
 import { useParams } from "next/navigation";
 import Toolbar from "@/app/(main)/_components/Toolbar";
 import Cover from "@/components/Cover";
 import { Skeleton } from "@/components/ui/skeleton";
+import Editor from "@/components/Editor";
+import { cn } from "@/lib/utils";
 
 export default function DocumentIdPage() {
   const params = useParams();
@@ -15,6 +16,15 @@ export default function DocumentIdPage() {
   const document = useQuery(api.documents.getDocumentById, {
     documentId,
   });
+
+  const update = useMutation(api.documents.updateDocumentTitle);
+
+  const onChange = (content: string) => {
+    update({
+      id: params.documentId as Id<"documents">,
+      content,
+    });
+  };
 
   if (document === undefined) {
     return (
@@ -45,10 +55,17 @@ export default function DocumentIdPage() {
   }
 
   return (
-    <div className="pb-40">
-      <Cover url={document.coverImage} />
+    <div className={cn("pb-40", document.isArchived && "mt-22")}>
+      <Cover isArchived={document.isArchived} url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar initialData={document} />
+        <Editor
+          editable={!document.isArchived}
+          documentId={documentId}
+          onChange={onChange}
+          initialContent={document.content}
+        />
+        {/* <Editor /> */}
       </div>
     </div>
   );

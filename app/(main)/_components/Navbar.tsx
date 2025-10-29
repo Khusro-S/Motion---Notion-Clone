@@ -48,6 +48,7 @@ export default function Navbar({ isCollapsed, onResetWidth }: NavbarProps) {
           <Title initialData={document} />
           <div className="flex items-center gap-x-2">
             <Menu
+              isArchived={document.isArchived}
               documentId={document._id}
               coverUrl={document.coverImage}
               icon={!!document.icon}
