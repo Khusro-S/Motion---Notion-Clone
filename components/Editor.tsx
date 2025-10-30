@@ -22,12 +22,12 @@ interface EditorProps {
   documentId: Id<"documents">;
 }
 
-export default function Editor({
+const Editor = ({
   onChange,
   initialContent,
   editable,
   documentId,
-}: EditorProps) {
+}: EditorProps) => {
   const { resolvedTheme } = useTheme();
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const { edgestore } = useEdgeStore();
@@ -257,6 +257,7 @@ export default function Editor({
     } else {
       previousFilesRef.current = new Set();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentId]); // ONLY depend on documentId, NOT initialContent
 
   // Cleanup timeout on unmount
@@ -275,4 +276,6 @@ export default function Editor({
       />
     </div>
   );
-}
+};
+
+export default Editor;

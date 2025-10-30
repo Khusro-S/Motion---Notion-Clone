@@ -23,49 +23,52 @@ export default function CoverImageModal() {
   const [dropzoneWidth, setDropzoneWidth] = useState(450);
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
+    const { uploadFn } = useFileUpload({
+      documentId: params.documentId as Id<"documents">,
+      existingUrl: coverImage.url,
+      onSuccess: () => {
+        coverImage.onClose();
+      },
+    });
 
-    const updateWidth = () => {
-      if (typeof window === "undefined") return;
+    useEffect(() => {
+      setIsMounted(true);
 
-      if (window.innerWidth < 640) {
-        setDropzoneWidth(Math.min(window.innerWidth * 0.8, 450));
-      } else {
-        // Desktop: fixed 450px
-        setDropzoneWidth(450);
-      }
-    };
+      const updateWidth = () => {
+        if (typeof window === "undefined") return;
 
-    // Set initial width
-    updateWidth();
+        if (window.innerWidth < 640) {
+          setDropzoneWidth(Math.min(window.innerWidth * 0.8, 450));
+        } else {
+          // Desktop: fixed 450px
+          setDropzoneWidth(450);
+        }
+      };
 
-    let timeoutId: NodeJS.Timeout;
-    const debouncedUpdate = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        updateWidth();
-      }, 100);
-    };
-    // Update on resize
-    window.addEventListener("resize", debouncedUpdate);
-    return () => {
-      window.removeEventListener("resize", debouncedUpdate);
-      clearTimeout(timeoutId);
-    };
-  }, []);
+      // Set initial width
+      updateWidth();
 
+      let timeoutId: NodeJS.Timeout;
+      const debouncedUpdate = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          updateWidth();
+        }, 100);
+      };
+      // Update on resize
+      window.addEventListener("resize", debouncedUpdate);
+      return () => {
+        window.removeEventListener("resize", debouncedUpdate);
+        clearTimeout(timeoutId);
+      };
+    }, []);
+
+    if (!isMounted) {
+      return null; // or a skeleton
+    }
   const onClose = () => {
     coverImage.onClose();
   };
-
-  const { uploadFn } = useFileUpload({
-    documentId: params.documentId as Id<"documents">,
-    existingUrl: coverImage.url,
-    onSuccess: () => {
-      coverImage.onClose();
-    },
-  });
 
   return (
     <Dialog open={coverImage.isOpen} onOpenChange={onClose}>

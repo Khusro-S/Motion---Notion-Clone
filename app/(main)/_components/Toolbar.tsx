@@ -12,8 +12,6 @@ import TextareaAutosize from "react-textarea-autosize";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useTitle } from "@/hooks/use-title";
-import { removeIcon } from "@/convex/documents";
-import { on } from "events";
 import { cn } from "@/lib/utils";
 import { useCoverImage } from "@/hooks/use-cover-image";
 

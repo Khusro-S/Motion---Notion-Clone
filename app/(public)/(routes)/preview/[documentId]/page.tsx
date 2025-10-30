@@ -65,12 +65,16 @@ export default function DocumentIdPage() {
   }
 
   return (
-    <div className={cn("pb-40", document.isArchived && "mt-22")}>
-      <Cover isArchived={document.isArchived} url={document.coverImage} />
-      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
-        <Toolbar initialData={document} />
+    <div className="pb-40">
+      <Cover
+        preview
+        isArchived={document.isArchived}
+        url={document.coverImage}
+      />
+      <div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10">
+        <Toolbar preview initialData={document} />
         <Editor
-          editable={!document.isArchived}
+          editable={false}
           documentId={documentId}
           onChange={onChange}
           initialContent={document.content}

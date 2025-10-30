@@ -28,7 +28,8 @@ export default function Cover({ url, preview, isArchived }: CoverProps) {
       className={cn(
         "relative w-full mt-8 group",
         !url || url === undefined ? "h-[12vh]" : "md:h-[35vh] h-[25vh]",
-        url && "bg-muted"
+        url && "bg-muted",
+        preview && "mt-0"
       )}
     >
       {!!url && (

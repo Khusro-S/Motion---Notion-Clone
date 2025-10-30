@@ -65,6 +65,7 @@ export default function TrashBox() {
       toast.success("Your note is deleted permanently!");
     } catch (error) {
       toast.error("Failed to delete your note.");
+      console.log(`Failed to delete your note: ${error}`);
       router.push(`/documents/${documentId}`);
     } finally {
       toast.dismiss(loadingToast);

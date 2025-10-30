@@ -8,10 +8,7 @@ import Image from "next/image";
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useParams, useRouter } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
-import { useEffect } from "react";
-import { Spinner } from "@/components/Spinner";
+import { useRouter } from "next/navigation";
 
 export default function DocumentsPage() {
   const { user } = useUser();

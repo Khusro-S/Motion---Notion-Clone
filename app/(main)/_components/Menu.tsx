@@ -20,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCoverImage } from "@/hooks/use-cover-image";
 import IconPicker from "./IconPicker";
 import { useFileRemove } from "@/hooks/use-file-remove";
-import { isatty } from "tty";
 
 interface MenuProps {
   documentId: Id<"documents">;
