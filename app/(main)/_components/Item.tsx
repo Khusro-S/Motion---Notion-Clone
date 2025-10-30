@@ -98,8 +98,15 @@ export default function Item({
       loading: "Creating your new Note...",
       success: "New Note created!",
       error: (err) => {
-        // Check if it's a limit error and return the full error message
-        const errorMessage = err instanceof Error ? err.message : String(err);
+        // Robust error extraction for all error types
+        const errorMessage =
+          (typeof err === "string" && err) ||
+          (err instanceof Error && err.message) ||
+          (err &&
+            typeof err === "object" &&
+            "message" in err &&
+            (err as any).message) ||
+          "Failed to create your new Note.";
         if (errorMessage.toLowerCase().includes("limit reached")) {
           return "Limit reached. Max 10 notes allowed!";
         }
