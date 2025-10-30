@@ -12,14 +12,14 @@ export default function Logo() {
   return (
     <div className="hidden md:flex items-center">
       <Image
-        src="motion-logo.svg"
+        src="/motion-logo.png"
         height="40"
         width="40"
         alt="Logo"
         className="dark:hidden"
       />
       <Image
-        src="motion-logo-dark.svg"
+        src="/motion-logo-dark.png"
         height="40"
         width="40"
         alt="Logo"

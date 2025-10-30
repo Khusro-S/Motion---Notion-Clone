@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     icon: [
       {
         media: "(prefers-color-scheme:light",
-        url: "/motion-logo.svg",
-        href: "/motion-logo.svg",
+        url: "/motion-logo.png",
+        href: "/motion-logo.png",
       },
       {
         media: "(prefers-color-scheme:dark",
-        url: "/motion-logo-dark.svg",
-        href: "/motion-logo-dark.svg",
+        url: "/motion-logo-dark.png",
+        href: "/motion-logo-dark.png",
       },
     ],
   },
