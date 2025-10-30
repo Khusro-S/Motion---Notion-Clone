@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import Toolbar from "@/app/(main)/_components/Toolbar";
 import Cover from "@/components/Cover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { notFound } from "next/navigation";
 
 export default function DocumentIdPage() {
   const Editor = useMemo(
@@ -55,10 +56,8 @@ export default function DocumentIdPage() {
     // );
   }
 
-  if (document === null) {
-    return (
-      <div className="h-full flex items-center justify-center">Not found</div>
-    );
+  if (document === null || !document.isPublished) {
+    notFound();
   }
 
   return (
