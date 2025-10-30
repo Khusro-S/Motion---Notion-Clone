@@ -10,7 +10,6 @@ import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 
 import Logo from "./Logo";
-import Link from "next/link";
 
 export default function Navbar() {
   const scrolled = useScrollTop();

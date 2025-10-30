@@ -12,9 +12,6 @@ import { useMemo } from "react";
 import Toolbar from "@/app/(main)/_components/Toolbar";
 import Cover from "@/components/Cover";
 import { Skeleton } from "@/components/ui/skeleton";
-// import Editor from "@/components/Editor";
-
-import { cn } from "@/lib/utils";
 
 export default function DocumentIdPage() {
   const Editor = useMemo(
