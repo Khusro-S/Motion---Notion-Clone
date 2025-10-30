@@ -13,7 +13,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -57,6 +57,8 @@ export default function Item({
   const create = useMutation(api.documents.create);
   const archive = useMutation(api.documents.archive);
 
+  const documentCountData = useQuery(api.documents.getUserDocumentCount);
+
   const { editingTitleId, editingTitleValue } = useTitle();
 
   // Use editing value if this item is being edited, otherwise use the label prop
@@ -98,19 +100,16 @@ export default function Item({
       loading: "Creating your new Note...",
       success: "New Note created!",
       error: (err) => {
-        // Robust error extraction for all error types
-        const errorMessage =
-          (typeof err === "string" && err) ||
-          (err instanceof Error && err.message) ||
-          (err &&
-            typeof err === "object" &&
-            "message" in err &&
-            (err as any).message) ||
-          "Failed to create your new Note.";
-        if (errorMessage.toLowerCase().includes("limit reached")) {
+        // Check if it's a limit error and return the full error message
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        if (
+          errorMessage.toLowerCase().includes("limit reached") ||
+          (documentCountData && documentCountData >= documentCountData && 10)
+        ) {
           return "Limit reached. Max 10 notes allowed!";
         }
-        return "Failed to create your new Note.";
+        return "Failed to create your new note.";
       },
     });
   };

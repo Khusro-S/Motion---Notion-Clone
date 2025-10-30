@@ -140,17 +140,13 @@ export default function Navigation() {
       loading: "Creating your new note...",
       success: "New note created!",
       error: (err) => {
-        // Robust error extraction for all error types
-        const errorMessage =
-          (typeof err === "string" && err) ||
-          (err instanceof Error && err.message) ||
-          (err &&
-            typeof err === "object" &&
-            "message" in err &&
-            (err as any).message) ||
-          "Failed to create your new note.";
-        console.log("error:", errorMessage);
-        if (errorMessage.toLowerCase().includes("limit reached")) {
+        // Check if it's a limit error and return the full error message
+        const errorMessage = err instanceof Error ? err.message : String(err);
+
+        if (
+          errorMessage.toLowerCase().includes("limit reached") ||
+          (documentCountData && documentCountData >= documentCountData && 10)
+        ) {
           return "Limit reached. Max 10 notes allowed!";
         }
         return "Failed to create your new note.";
