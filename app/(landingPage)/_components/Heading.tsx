@@ -35,7 +35,7 @@ export default function Heading() {
       )}
 
       {!isAuthenticated && !isLoading && (
-        <SignInButton mode="modal">
+        <SignInButton mode="modal" fallbackRedirectUrl="/documents">
           <Button>
             Get Motion Free <ArrowRight className=" h-4 w-4" />
           </Button>
