@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Motion — Notion Clone
 
-## Getting Started
+A small, educational clone of Notion built to practice Next.js, Convex, and file uploads. This repo is a demo/portfolio project, not meant for production use. Use it to try the demo, learn and experiment ✨
 
-First, run the development server:
+## 🎯 What this project is
+
+Motion is a simplified Notion-like editor and document manager. It demonstrates:
+
+- A Next.js App Router application (TypeScript + React).
+- Convex backend for real-time DB and server-side logic.
+- File uploads via EdgeStore with upload limits enforced.
+- Rich text editing using BlockNote.
+- Authentication via Clerk.
+- Toasts with Sonner and UI components built with Shadcn.
+
+## 🧩 High-level architecture
+
+Simple explanation of how the pieces fit together:
+
+- Frontend (Next.js)
+  - Pages & components live in `app/` and `components/`.
+  - Editor component (`components/Editor.tsx`) uses BlockNote and uploads files to EdgeStore.
+  - UI uses Tailwind CSS, small design system components under `components/ui`.
+  - Authentication (Clerk), client-side sign-in and session management, Clerk provides user identity to the app.
+  - Client calls Convex mutations/queries via the generated Convex client (`convex/_generated/api`).
+
+- Backend (Convex)
+  - Server functions in `convex/documents.ts` implement queries and mutations (create, update, archive, remove, get counts).
+  - File and document limits (demo restrictions) are enforced server-side.
+  - Auth is handled via Clerk on the frontend, Convex uses `ctx.auth.getUserIdentity()` (with Clerk-provided identity) to scope user data.
+
+- File storage (EdgeStore)
+  - Public images and files are uploaded via Edgestor. Uploaded file URLs are saved into document content or as cover images.
+
+## 📁 Folder structure (important files)
+
+- `app/` — App Router pages and layouts.
+  - `app/(main)/` — Main authenticated UI including documents, editor, navigation, trash.
+  - `app/(landingPage)/` — Public landing/marketing pages.
+
+- `components/` — Reusable UI and feature components (Editor, Cover, Upload helpers).
+- `convex/` — Convex backend functions, schema, and generated types.
+- `hooks/` — Custom React hooks used across app.
+- `lib/` — Helpers (EdgeStore wrapper, utils).
+- `public/` — Static assets.
+
+NOTE: This is a developer-focused example. Explore the folders to learn more. 🧭
+
+## ✨ Key features
+
+- Create, edit, archive, and delete notes/documents.
+- BlockNote editor with image/file uploads.
+- Demo limits: max 10 documents, max 5 files per demo user (enforced in Convex).
+- Trash/restore flow and "Delete forever" with file cleanup.
+- Publishing preview (public preview route) and publish/unpublish toggle.
+- Simple responsive UI with sidebar and top navbar.
+
+## 📺 Demo video
+
+https://github.com/user-attachments/assets/021e9674-96e8-4ade-93c1-a9e847fc338d
+
+## 🌐 Live demo
+
+Live demo:
+
+[Motion - Notion clone](https://motion-one-omega.vercel.app/)
+
+## 🛠️ Run locally
+
+### Prerequisites
+
+- Node.js (LTS recommended)
+- pnpm (project uses pnpm, but npm/yarn can work with minor adjustments)
+- A Convex account/project
+- Clerk account (for auth), or swap out auth in dev
+- Edgestore credentials if testing file uploads
+
+### Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# from repo root
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` in the project root with the following variables (example names, adapt to your provider):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+``` js
 
-## Learn More
+# Convex (serverless endpoint for your Convex project)
+NEXT_PUBLIC_CONVEX_URL=http://your-convex-url.convex.cloud
 
-To learn more about Next.js, take a look at the following resources:
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_xxx_xxx
+CLERK_SECRET_KEY=sk_xxx
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# EdgeStore (example)
+EDGE_STORE_ACCESS_KEY=edgestore_access_key_here
+EDGE_STORE_SECRET_KEY=edgestore_secret_key_here
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
 
-## Deploy on Vercel
+Notes(s):
+- Replace the variable names and values with your actual keys from Clerk, Convex, and EdgeStore (might be updated by them).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Start the dev server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```zsh
+pnpm dev
+# or
+pnpm next dev
+
+# and
+pnpm convex dev
+```
+
+Open http://localhost:3000 and sign in with the demo account flow.
+
+
+## ✅ Quality & Limitations
+
+- This project is a learning/portfolio clone, not production-ready.
+- Security hardening, validation, rate limiting, and access controls are simplified.
+- Some assumptions are made for demo convenience (example: public uploads).
+
+## 🙋‍♂️ Contact
+
+[![LinkedIn](https://tinyurl.com/bdz848dw)](https://www.linkedin.com/in/khusro-sakhi)
+
+---
