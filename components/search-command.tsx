@@ -44,7 +44,8 @@ export default function SearchCommand() {
     return () => document.removeEventListener("keydown", down);
   }, [toggle]);
 
-  const onSelect = (id: string) => {
+  const onSelect = (val: string) => {
+    const id = val.includes("-") ? val.split("-")[0] : val;
     router.push(`/documents/${id}`);
     onClose();
   };
@@ -61,7 +62,7 @@ export default function SearchCommand() {
           {documents?.map((document) => (
             <CommandItem
               key={document._id}
-              value={`${document._id}`}
+              value={`${document._id}-${document.title}`}
               title={document.title}
               onSelect={onSelect}
             >
