@@ -61,7 +61,7 @@ export default function DocumentIdPage() {
   }
 
   return (
-    <div className="pb-40">
+    <div className="pb-40 dark bg-[#111111]">
       <Cover
         preview
         isArchived={document.isArchived}

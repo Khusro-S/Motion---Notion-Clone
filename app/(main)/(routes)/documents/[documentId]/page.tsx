@@ -75,7 +75,6 @@ export default function DocumentIdPage() {
           onChange={onChange}
           initialContent={document.content}
         />
-        {/* <Editor /> */}
       </div>
     </div>
   );

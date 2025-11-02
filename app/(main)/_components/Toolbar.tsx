@@ -109,7 +109,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
   };
 
   return (
-    <div className="pl-[54px] group relative">
+    <div className="md:pl-[54px] px-[38px] group relative">
       {!!initialData.icon && !preview && !initialData.isArchived && (
         <div className="flex items-center gap-x-2 group/icon pt-4">
           <IconPicker onChange={onIconSelect}>
@@ -189,7 +189,7 @@ export default function Toolbar({ initialData, preview }: ToolbarProps) {
           value={displayTitle}
           onChange={(e) => onInput(e.target.value)}
           className={cn(
-            "text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none w-full ",
+            "text-7xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none w-full ",
             initialData.icon ? "mt-3" : ""
           )}
         />

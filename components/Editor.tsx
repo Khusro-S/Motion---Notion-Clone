@@ -273,6 +273,7 @@ const Editor = ({
         onChange={handleChange}
         editor={editor}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
+        className="max-sm:-mx-8"
       />
     </div>
   );
