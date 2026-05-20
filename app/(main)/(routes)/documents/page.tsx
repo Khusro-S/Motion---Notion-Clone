@@ -28,7 +28,7 @@ export default function DocumentsPage() {
     toast.promise(promise, {
       loading: "Creating your new note...",
       success: "New note created!",
-      error: (err) => {
+      error: (err: Error) => {
         // Check if it's a limit error and return the full error message
         const errorMessage = err instanceof Error ? err.message : String(err);
 

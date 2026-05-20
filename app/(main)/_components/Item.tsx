@@ -99,13 +99,14 @@ export default function Item({
     toast.promise(promise, {
       loading: "Creating your new Note...",
       success: "New Note created!",
-      error: (err) => {
+      error: (err: Error) => {
         // Check if it's a limit error and return the full error message
         const errorMessage = err instanceof Error ? err.message : String(err);
 
         if (
           errorMessage.toLowerCase().includes("limit reached") ||
-          (documentCountData && documentCountData >= documentCountData && 10)
+          (documentCountData &&
+            documentCountData.count >= documentCountData.limit)
         ) {
           return "Limit reached. Max 10 notes allowed!";
         }
