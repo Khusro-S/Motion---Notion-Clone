@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  mdast-util-to-hast: '>=13.2.1'
   cookie@<0.7.0: ^0.7.0
   fast-xml-parser@<5.7.0: ^5.7.0
   fast-xml-parser@>=5.0.0 <5.3.5: ^5.3.5
