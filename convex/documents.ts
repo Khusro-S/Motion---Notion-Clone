@@ -1,16 +1,24 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, QueryCtx } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 
 // Demo limits for portfolio project
 const MAX_DOCUMENTS_PER_USER = 10;
 const MAX_FILES_PER_USER = 5;
 
+interface Block {
+  props?: { url?: string; src?: string };
+  children?: Block[];
+}
+
 // Helper function to count total files in user's documents
-const countUserFiles = async (ctx: any, userId: string): Promise<number> => {
+const countUserFiles = async (
+  ctx: QueryCtx,
+  userId: string,
+): Promise<number> => {
   const documents = await ctx.db
     .query("documents")
-    .withIndex("by_user", (q: any) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("userId", userId))
     .collect();
 
   let fileCount = 0;
@@ -24,12 +32,9 @@ const countUserFiles = async (ctx: any, userId: string): Promise<number> => {
     // Count files in content
     if (doc.content) {
       try {
-        const blocks = JSON.parse(doc.content);
-        const countFilesInBlocks = (block: any): void => {
-          if (
-            block.props &&
-            ("url" in block.props || "src" in block.props)
-          ) {
+        const blocks = JSON.parse(doc.content) as Block[];
+        const countFilesInBlocks = (block: Block): void => {
+          if (block.props && ("url" in block.props || "src" in block.props)) {
             fileCount++;
           }
           if (block.children) {
@@ -423,14 +428,14 @@ export const updateDocumentTitle = mutation({
 
       if (rest.content) {
         try {
-          const newBlocks = JSON.parse(rest.content);
-          const oldBlocks = existingDocument.content
-            ? JSON.parse(existingDocument.content)
-            : [];
+          const newBlocks = JSON.parse(rest.content) as Block[];
+          const oldBlocks = (
+            existingDocument.content ? JSON.parse(existingDocument.content) : []
+          ) as Block[];
 
-          const countFiles = (blocks: any[]): number => {
+          const countFiles = (blocks: Block[]): number => {
             let count = 0;
-            const traverse = (block: any): void => {
+            const traverse = (block: Block): void => {
               if (
                 block.props &&
                 ("url" in block.props || "src" in block.props)

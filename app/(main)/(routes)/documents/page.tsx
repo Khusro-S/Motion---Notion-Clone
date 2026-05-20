@@ -34,7 +34,8 @@ export default function DocumentsPage() {
 
         if (
           errorMessage.toLowerCase().includes("limit reached") ||
-          (documentCountData && documentCountData >= documentCountData && 10)
+          (documentCountData &&
+            documentCountData.count >= documentCountData.limit)
         ) {
           return "Limit reached. Max 10 notes allowed!";
         }

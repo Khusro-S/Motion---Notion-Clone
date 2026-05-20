@@ -95,7 +95,7 @@ export default function Navigation() {
       );
     }
   };
-  const handleMouseUp = (_: MouseEvent) => {
+  const handleMouseUp = () => {
     isResizingRef.current = false;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);

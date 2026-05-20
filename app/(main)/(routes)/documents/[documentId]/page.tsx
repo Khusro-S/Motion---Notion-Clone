@@ -16,11 +16,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { cn } from "@/lib/utils";
 
+const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
+
 export default function DocumentIdPage() {
-  const Editor = useMemo(
-    () => dynamic(() => import("@/components/Editor"), { ssr: false }),
-    []
-  ); // recommended from the docs
   const params = useParams();
   const documentId = params.documentId as Id<"documents">;
   const document = useQuery(api.documents.getDocumentById, {

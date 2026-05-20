@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        media: "(prefers-color-scheme:light",
+        media: "(prefers-color-scheme: light)",
         url: "/motion-logo.png",
         href: "/motion-logo.png",
       },
       {
-        media: "(prefers-color-scheme:dark",
+        media: "(prefers-color-scheme: dark)",
         url: "/motion-logo-dark.png",
         href: "/motion-logo-dark.png",
       },
